@@ -51,6 +51,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   void _showDetails(QrRecord record) {
     final isUrl = Uri.tryParse(record.content)?.hasAbsolutePath ?? false;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
@@ -58,11 +60,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF1E293B), // Slate 800
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(32),
               topRight: Radius.circular(32),
+            ),
+            border: Border(
+              top: BorderSide(
+                color: theme.colorScheme.onSurface.withOpacity(0.08),
+                width: 1.0,
+              ),
             ),
           ),
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -76,7 +84,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     width: 48,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: theme.colorScheme.onSurface.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -105,8 +113,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         children: [
                           Text(
                             record.name,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -115,7 +123,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           Text(
                             _formatDate(record.timestamp),
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.4),
+                              color: theme.colorScheme.onSurface.withOpacity(0.4),
                               fontSize: 12,
                             ),
                           ),
@@ -156,18 +164,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   padding: const EdgeInsets.all(16),
                   constraints: const BoxConstraints(maxHeight: 120),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.2),
+                    color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.04),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.05),
+                      color: theme.colorScheme.onSurface.withOpacity(0.05),
                     ),
                   ),
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
                     child: SelectableText(
                       record.content,
-                      style: const TextStyle(
-                        color: Colors.white70,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface.withOpacity(0.8),
                         fontSize: 14,
                         fontFamily: 'monospace',
                       ),
@@ -182,12 +190,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.05),
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.onSurface.withOpacity(0.05),
+                          foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                            side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1)),
                           ),
                           elevation: 0,
                         ),
@@ -209,17 +217,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.05),
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.onSurface.withOpacity(0.05),
+                          foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                            side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1)),
                           ),
                           elevation: 0,
                         ),
                         onPressed: () {
-                          Share.share(record.content);
+                          SharePlus.instance.share(ShareParams(text: record.content));
                         },
                         icon: const Icon(Icons.share_rounded, size: 20),
                         label: const Text('Share'),
@@ -232,7 +240,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 if (isUrl) ...[
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6366F1),
+                      backgroundColor: theme.colorScheme.primary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -291,17 +299,26 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0F172A), // Slate 900
-              Color(0xFF1E1B4B), // Indigo 955
-              Color(0xFF020617), // Slate 955
-            ],
+            colors: isDark
+                ? [
+                    const Color(0xFF0F172A), // Slate 900
+                    const Color(0xFF1E1B4B), // Indigo 955
+                    const Color(0xFF020617), // Slate 955
+                  ]
+                : [
+                    const Color(0xFFF1F5F9), // Slate 100
+                    const Color(0xFFE2E8F0), // Slate 200
+                    const Color(0xFFF8FAFC), // Slate 50
+                  ],
           ),
         ),
         child: SafeArea(
@@ -316,17 +333,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   children: [
                     IconButton(
                       style: IconButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.05),
-                        foregroundColor: Colors.white,
+                        backgroundColor: theme.colorScheme.onBackground.withOpacity(0.05),
+                        foregroundColor: theme.colorScheme.onBackground,
                         padding: const EdgeInsets.all(12),
                       ),
                       icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Text(
+                    Text(
                       'Saved History',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: theme.colorScheme.onBackground,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         letterSpacing: -0.5,
@@ -356,16 +373,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: isSelected ? const Color(0xFF6366F1) : Colors.white.withOpacity(0.05),
+                            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isSelected ? Colors.transparent : Colors.white.withOpacity(0.1),
+                              color: isSelected ? Colors.transparent : theme.colorScheme.onBackground.withOpacity(0.1),
                             ),
                           ),
                           child: Text(
                             type,
                             style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.white70,
+                              color: isSelected ? Colors.white : theme.colorScheme.onBackground.withOpacity(0.7),
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               fontSize: 14,
                             ),
@@ -380,16 +397,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
               // List area
               Expanded(
                 child: _isLoading
-                    ? const Center(child: CircularProgressIndicator(color: Color(0xFF6366F1)))
+                    ? Center(child: CircularProgressIndicator(color: theme.colorScheme.primary))
                     : _filteredRecords.isEmpty
-                        ? _buildEmptyState()
+                        ? _buildEmptyState(theme)
                         : ListView.builder(
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                             physics: const BouncingScrollPhysics(),
                             itemCount: _filteredRecords.length,
                             itemBuilder: (context, index) {
                               final record = _filteredRecords[index];
-                              return _buildRecordCard(record);
+                              return _buildRecordCard(record, theme, isDark);
                             },
                           ),
               ),
@@ -400,20 +417,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(ThemeData theme) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
           Icons.history_rounded,
           size: 72,
-          color: Colors.white.withOpacity(0.15),
+          color: theme.colorScheme.onBackground.withOpacity(0.15),
         ),
         const SizedBox(height: 16),
         Text(
           'No history found',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.5),
+            color: theme.colorScheme.onBackground.withOpacity(0.5),
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -424,7 +441,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ? 'Scan or generate QR codes to build history.'
               : 'No $_filter items saved yet.',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.3),
+            color: theme.colorScheme.onBackground.withOpacity(0.3),
             fontSize: 14,
           ),
           textAlign: TextAlign.center,
@@ -433,16 +450,25 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  Widget _buildRecordCard(QrRecord record) {
+  Widget _buildRecordCard(QrRecord record, ThemeData theme, bool isDark) {
     final isScanned = record.type == 'scanned';
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.06),
+          color: theme.colorScheme.onBackground.withOpacity(isDark ? 0.06 : 0.08),
         ),
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -477,8 +503,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         record.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: theme.colorScheme.onBackground,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -489,7 +515,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
+                          color: theme.colorScheme.onBackground.withOpacity(0.5),
                           fontSize: 13,
                         ),
                       ),
@@ -497,7 +523,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       Text(
                         _formatDate(record.timestamp),
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.3),
+                          color: theme.colorScheme.onBackground.withOpacity(0.3),
                           fontSize: 11,
                         ),
                       ),
@@ -508,7 +534,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 const SizedBox(width: 8),
                 Icon(
                   Icons.arrow_forward_ios_rounded,
-                  color: Colors.white.withOpacity(0.2),
+                  color: theme.colorScheme.onBackground.withOpacity(0.2),
                   size: 16,
                 ),
               ],

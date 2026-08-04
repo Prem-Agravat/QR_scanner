@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 
+// Global notifier for managing the theme mode across the application
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const QRApp());
@@ -11,31 +14,60 @@ class QRApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'QR Hub',
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark,
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF6366F1), // Indigo 500
-          secondary: Color(0xFFEC4899), // Pink 500
-          background: Color(0xFF020617), // Slate 950
-          surface: Color(0xFF0F172A), // Slate 900
-        ),
-        scaffoldBackgroundColor: const Color(0xFF020617),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        snackBarTheme: SnackBarThemeData(
-          backgroundColor: const Color(0xFF1E293B),
-          contentTextStyle: const TextStyle(color: Colors.white),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      ),
-      home: const HomeScreen(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (_, currentMode, __) {
+        return MaterialApp(
+          title: 'QR Hub',
+          debugShowCheckedModeBanner: false,
+          themeMode: currentMode,
+          // Light Mode Theme configuration
+          theme: ThemeData(
+            useMaterial3: true,
+            brightness: Brightness.light,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF6366F1), // Indigo primary
+              brightness: Brightness.light,
+              secondary: const Color(0xFFEC4899), // Pink secondary
+              background: const Color(0xFFF8FAFC), // Slate 50
+              surface: Colors.white,
+            ),
+            scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+            snackBarTheme: SnackBarThemeData(
+              backgroundColor: const Color(0xFF1E293B),
+              contentTextStyle: const TextStyle(color: Colors.white),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          // Dark Mode Theme configuration
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            brightness: Brightness.dark,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF6366F1), // Indigo primary
+              brightness: Brightness.dark,
+              secondary: const Color(0xFFEC4899), // Pink secondary
+              background: const Color(0xFF020617), // Slate 950
+              surface: const Color(0xFF0F172A), // Slate 900
+            ),
+            scaffoldBackgroundColor: const Color(0xFF020617),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+            snackBarTheme: SnackBarThemeData(
+              backgroundColor: const Color(0xFF1E293B),
+              contentTextStyle: const TextStyle(color: Colors.white),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          home: const HomeScreen(),
+        );
+      },
     );
   }
 }

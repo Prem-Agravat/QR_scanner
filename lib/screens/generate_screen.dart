@@ -64,18 +64,25 @@ class _GenerateScreenState extends State<GenerateScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0F172A), // Slate 900
-              Color(0xFF881337), // Rose 950
-              Color(0xFF020617), // Slate 950
-            ],
+            colors: isDark
+                ? [
+                    const Color(0xFF0F172A), // Slate 900
+                    const Color(0xFF881337), // Rose 950
+                    const Color(0xFF020617), // Slate 955
+                  ]
+                : [
+                    const Color(0xFFFEE2E2), // Light Red/Rose
+                    const Color(0xFFFFE4E6),
+                    const Color(0xFFF8FAFC),
+                  ],
           ),
         ),
         child: SafeArea(
@@ -83,29 +90,23 @@ class _GenerateScreenState extends State<GenerateScreen> {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       style: IconButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.05),
-                        foregroundColor: Colors.white,
+                        backgroundColor: theme.colorScheme.onBackground.withOpacity(0.05),
+                        foregroundColor: theme.colorScheme.onBackground,
                         padding: const EdgeInsets.all(12),
                       ),
-                      icon: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 20,
-                      ),
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Text(
+                    Text(
                       'Generator',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: theme.colorScheme.onBackground,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         letterSpacing: -0.5,
@@ -115,43 +116,45 @@ class _GenerateScreenState extends State<GenerateScreen> {
                   ],
                 ),
               ),
-
+              
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0,
-                    vertical: 16.0,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 20),
-
+                      
                       // QR Display Area
                       Center(
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.03),
+                            color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
                             borderRadius: BorderRadius.circular(32),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.08),
+                              color: isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.05),
                               width: 1.0,
                             ),
+                            boxShadow: isDark
+                                ? []
+                                : [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.04),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 8),
+                                    )
+                                  ],
                           ),
                           child: _qrData.isEmpty
                               ? Container(
                                   width: 200,
                                   height: 200,
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.2),
+                                    color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.03),
                                     borderRadius: BorderRadius.circular(24),
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.05),
-                                      style: BorderStyle.none,
-                                    ),
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -159,13 +162,13 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                       Icon(
                                         Icons.qr_code_2_rounded,
                                         size: 72,
-                                        color: Colors.white.withOpacity(0.15),
+                                        color: theme.colorScheme.onBackground.withOpacity(0.15),
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
                                         'Waiting for text...',
                                         style: TextStyle(
-                                          color: Colors.white.withOpacity(0.3),
+                                          color: theme.colorScheme.onBackground.withOpacity(0.3),
                                           fontSize: 14,
                                         ),
                                       ),
@@ -179,9 +182,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                     borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(
-                                          0xFFEC4899,
-                                        ).withOpacity(0.25),
+                                        color: const Color(0xFFEC4899).withOpacity(0.25),
                                         blurRadius: 30,
                                         offset: const Offset(0, 10),
                                       ),
@@ -207,14 +208,14 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                 ),
                         ),
                       ),
-
+                      
                       const SizedBox(height: 40),
-
+                      
                       // Name Label
-                      const Text(
+                      Text(
                         'QR Code Name / Label',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: theme.colorScheme.onBackground.withOpacity(0.7),
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -225,17 +226,17 @@ class _GenerateScreenState extends State<GenerateScreen> {
                       TextField(
                         controller: _nameController,
                         maxLines: 1,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: theme.colorScheme.onBackground,
                           fontSize: 16,
                         ),
                         decoration: InputDecoration(
                           hintText: 'e.g. My Website QR',
                           hintStyle: TextStyle(
-                            color: Colors.white.withOpacity(0.2),
+                            color: theme.colorScheme.onBackground.withOpacity(0.2),
                           ),
                           filled: true,
-                          fillColor: Colors.white.withOpacity(0.04),
+                          fillColor: theme.colorScheme.onBackground.withOpacity(0.04),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 20,
                             vertical: 16,
@@ -246,42 +247,42 @@ class _GenerateScreenState extends State<GenerateScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                              color: Color(0xFFEC4899), // Pink 500
+                            borderSide: BorderSide(
+                              color: theme.colorScheme.secondary,
                               width: 1.5,
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 24),
-
+                      
                       // Input Label
-                      const Text(
+                      Text(
                         'Enter URL or Plain Text',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: theme.colorScheme.onBackground.withOpacity(0.7),
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 12),
-
+                      
                       // Text Field
                       TextField(
                         controller: _textController,
                         maxLines: 4,
                         minLines: 1,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: theme.colorScheme.onBackground,
                           fontSize: 16,
                         ),
                         decoration: InputDecoration(
                           hintText: 'https://example.com',
                           hintStyle: TextStyle(
-                            color: Colors.white.withOpacity(0.2),
+                            color: theme.colorScheme.onBackground.withOpacity(0.2),
                           ),
                           filled: true,
-                          fillColor: Colors.white.withOpacity(0.04),
+                          fillColor: theme.colorScheme.onBackground.withOpacity(0.04),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 20,
                             vertical: 16,
@@ -292,23 +293,23 @@ class _GenerateScreenState extends State<GenerateScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                              color: Color(0xFFEC4899), // Pink 500
+                            borderSide: BorderSide(
+                              color: theme.colorScheme.secondary,
                               width: 1.5,
                             ),
                           ),
                         ),
                       ),
-
+                      
                       const SizedBox(height: 24),
-
+                      
                       // Quick Actions
                       Row(
                         children: [
                           Expanded(
                             child: ElevatedButton.icon(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFEC4899), // Pink 500
+                                backgroundColor: theme.colorScheme.secondary,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
@@ -317,13 +318,13 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 elevation: 0,
-                                disabledBackgroundColor: Colors.white.withOpacity(0.05),
-                                disabledForegroundColor: Colors.white.withOpacity(0.2),
+                                disabledBackgroundColor: theme.colorScheme.onBackground.withOpacity(0.05),
+                                disabledForegroundColor: theme.colorScheme.onBackground.withOpacity(0.2),
                               ),
                               onPressed: _qrData.isEmpty
                                   ? null
                                   : () {
-                                      Share.share(_qrData);
+                                      SharePlus.instance.share(ShareParams(text: _qrData));
                                     },
                               icon: const Icon(Icons.share_rounded, size: 20),
                               label: const Text('Share'),
@@ -342,8 +343,8 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 elevation: 0,
-                                disabledBackgroundColor: Colors.white.withOpacity(0.05),
-                                disabledForegroundColor: Colors.white.withOpacity(0.2),
+                                disabledBackgroundColor: theme.colorScheme.onBackground.withOpacity(0.05),
+                                disabledForegroundColor: theme.colorScheme.onBackground.withOpacity(0.2),
                               ),
                               onPressed: (_qrData.isEmpty || _nameController.text.trim().isEmpty)
                                   ? null
@@ -359,12 +360,12 @@ class _GenerateScreenState extends State<GenerateScreen> {
                       if (_qrData.isNotEmpty || _nameController.text.isNotEmpty) ...[
                         ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.05),
-                            foregroundColor: Colors.white,
+                            backgroundColor: theme.colorScheme.onBackground.withOpacity(0.05),
+                            foregroundColor: theme.colorScheme.onBackground,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
-                              side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                              side: BorderSide(color: theme.colorScheme.onBackground.withOpacity(0.1)),
                             ),
                             elevation: 0,
                           ),

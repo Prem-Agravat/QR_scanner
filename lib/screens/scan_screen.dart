@@ -52,6 +52,8 @@ class _ScanScreenState extends State<ScanScreen> {
 
   void _showResultBottomSheet(String value) {
     final isUrl = Uri.tryParse(value)?.hasAbsolutePath ?? false;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
@@ -60,11 +62,17 @@ class _ScanScreenState extends State<ScanScreen> {
       barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) {
         return Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF1E293B), // Slate 800
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(32),
               topRight: Radius.circular(32),
+            ),
+            border: Border(
+              top: BorderSide(
+                color: theme.colorScheme.onSurface.withOpacity(0.08),
+                width: 1.0,
+              ),
             ),
           ),
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -79,7 +87,7 @@ class _ScanScreenState extends State<ScanScreen> {
                     width: 48,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: theme.colorScheme.onSurface.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -92,20 +100,20 @@ class _ScanScreenState extends State<ScanScreen> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF6366F1).withOpacity(0.15),
+                        color: theme.colorScheme.primary.withOpacity(0.15),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         isUrl ? Icons.link_rounded : Icons.text_snippet_rounded,
-                        color: const Color(0xFF818CF8),
+                        color: theme.colorScheme.primary,
                         size: 24,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Text(
                       isUrl ? 'Scanned Link' : 'Scanned Text',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -119,18 +127,18 @@ class _ScanScreenState extends State<ScanScreen> {
                   padding: const EdgeInsets.all(16),
                   constraints: const BoxConstraints(maxHeight: 180),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.2),
+                    color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.04),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.05),
+                      color: theme.colorScheme.onSurface.withOpacity(0.05),
                     ),
                   ),
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
                     child: SelectableText(
                       value,
-                      style: const TextStyle(
-                        color: Colors.white70,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface.withOpacity(0.8),
                         fontSize: 15,
                         height: 1.4,
                         fontFamily: 'monospace',
@@ -147,12 +155,12 @@ class _ScanScreenState extends State<ScanScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.05),
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.onSurface.withOpacity(0.05),
+                          foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                            side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1)),
                           ),
                           elevation: 0,
                         ),
@@ -176,12 +184,12 @@ class _ScanScreenState extends State<ScanScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.05),
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.onSurface.withOpacity(0.05),
+                          foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                            side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1)),
                           ),
                           elevation: 0,
                         ),
@@ -219,7 +227,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 if (isUrl) ...[
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6366F1), // Indigo 500
+                      backgroundColor: theme.colorScheme.primary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -251,7 +259,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 // Rescan button
                 TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.white54,
+                    foregroundColor: theme.colorScheme.onSurface.withOpacity(0.6),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   onPressed: () {
@@ -273,6 +281,9 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   void _showSaveDialog(String value) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     final TextEditingController nameController = TextEditingController(
       text: 'Scanned Code - ${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}',
     );
@@ -281,32 +292,32 @@ class _ScanScreenState extends State<ScanScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF1E293B), // Slate 800
+          backgroundColor: theme.colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
-            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+            side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1)),
           ),
-          title: const Text(
+          title: Text(
             'Save QR Code',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
+              Text(
                 'Give this QR code a specific name:',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+                style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.7), fontSize: 14),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: nameController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: InputDecoration(
                   hintText: 'Enter specific name...',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                  hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.3)),
                   filled: true,
-                  fillColor: Colors.black.withOpacity(0.2),
+                  fillColor: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.04),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -323,7 +334,7 @@ class _ScanScreenState extends State<ScanScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+              child: Text('Cancel', style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6))),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
