@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:uuid/uuid.dart';
+import '../models/qr_record.dart';
+import '../services/storage_service.dart';
 
 class GenerateScreen extends StatefulWidget {
   const GenerateScreen({super.key});
@@ -11,6 +14,7 @@ class GenerateScreen extends StatefulWidget {
 
 class _GenerateScreenState extends State<GenerateScreen> {
   final TextEditingController _textController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   String _qrData = '';
 
   @override
@@ -21,12 +25,40 @@ class _GenerateScreenState extends State<GenerateScreen> {
         _qrData = _textController.text;
       });
     });
+    _nameController.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
     _textController.dispose();
+    _nameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveQrCode() async {
+    final name = _nameController.text.trim();
+    final content = _textController.text.trim();
+    if (name.isNotEmpty && content.isNotEmpty) {
+      final record = QrRecord(
+        id: const Uuid().v4(),
+        name: name,
+        content: content,
+        type: 'generated',
+        timestamp: DateTime.now(),
+      );
+      await StorageService.addRecord(record);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('QR Code saved successfully!'),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Color(0xFF10B981),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -178,6 +210,51 @@ class _GenerateScreenState extends State<GenerateScreen> {
 
                       const SizedBox(height: 40),
 
+                      // Name Label
+                      const Text(
+                        'QR Code Name / Label',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Name Text Field
+                      TextField(
+                        controller: _nameController,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'e.g. My Website QR',
+                          hintStyle: TextStyle(
+                            color: Colors.white.withOpacity(0.2),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.04),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 16,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFEC4899), // Pink 500
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
                       // Input Label
                       const Text(
                         'Enter URL or Plain Text',
@@ -231,9 +308,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                           Expanded(
                             child: ElevatedButton.icon(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(
-                                  0xFFEC4899,
-                                ), // Pink 500
+                                backgroundColor: const Color(0xFFEC4899), // Pink 500
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
@@ -242,10 +317,8 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 elevation: 0,
-                                disabledBackgroundColor: Colors.white
-                                    .withOpacity(0.05),
-                                disabledForegroundColor: Colors.white
-                                    .withOpacity(0.2),
+                                disabledBackgroundColor: Colors.white.withOpacity(0.05),
+                                disabledForegroundColor: Colors.white.withOpacity(0.2),
                               ),
                               onPressed: _qrData.isEmpty
                                   ? null
@@ -253,31 +326,58 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                       Share.share(_qrData);
                                     },
                               icon: const Icon(Icons.share_rounded, size: 20),
-                              label: const Text('Share Code'),
+                              label: const Text('Share'),
                             ),
                           ),
-                          if (_qrData.isNotEmpty) ...[
-                            const SizedBox(width: 12),
-                            IconButton(
-                              style: IconButton.styleFrom(
-                                backgroundColor: Colors.white.withOpacity(0.05),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF10B981), // Emerald 500
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  side: BorderSide(
-                                    color: Colors.white.withOpacity(0.1),
-                                  ),
                                 ),
+                                elevation: 0,
+                                disabledBackgroundColor: Colors.white.withOpacity(0.05),
+                                disabledForegroundColor: Colors.white.withOpacity(0.2),
                               ),
-                              icon: const Icon(Icons.clear_rounded, size: 22),
-                              onPressed: () {
-                                _textController.clear();
-                              },
+                              onPressed: (_qrData.isEmpty || _nameController.text.trim().isEmpty)
+                                  ? null
+                                  : _saveQrCode,
+                              icon: const Icon(Icons.bookmark_add_rounded, size: 20),
+                              label: const Text('Save'),
                             ),
-                          ],
+                          ),
                         ],
                       ),
+                      const SizedBox(height: 12),
+                      
+                      if (_qrData.isNotEmpty || _nameController.text.isNotEmpty) ...[
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white.withOpacity(0.05),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                            ),
+                            elevation: 0,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _textController.clear();
+                              _nameController.clear();
+                            });
+                          },
+                          icon: const Icon(Icons.clear_all_rounded, size: 22),
+                          label: const Text('Clear All'),
+                        ),
+                      ],
                     ],
                   ),
                 ),

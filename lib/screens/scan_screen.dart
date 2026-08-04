@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:uuid/uuid.dart';
+import '../models/qr_record.dart';
+import '../services/storage_service.dart';
 
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key});
@@ -192,6 +195,25 @@ class _ScanScreenState extends State<ScanScreen> {
                   ],
                 ),
                 const SizedBox(height: 12),
+
+                // Save to History button
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF10B981), // Emerald 500
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: () {
+                    _showSaveDialog(value);
+                  },
+                  icon: const Icon(Icons.bookmark_add_rounded, size: 20),
+                  label: const Text('Save to History'),
+                ),
+                const SizedBox(height: 12),
                 
                 // URL launcher button if URL
                 if (isUrl) ...[
@@ -248,6 +270,96 @@ class _ScanScreenState extends State<ScanScreen> {
       });
       controller.start();
     });
+  }
+
+  void _showSaveDialog(String value) {
+    final TextEditingController nameController = TextEditingController(
+      text: 'Scanned Code - ${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}',
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF1E293B), // Slate 800
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+          ),
+          title: const Text(
+            'Save QR Code',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Give this QR code a specific name:',
+                style: TextStyle(color: Colors.white70, fontSize: 14),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: nameController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Enter specific name...',
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                  filled: true,
+                  fillColor: Colors.black.withOpacity(0.2),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF10B981), // Emerald 500
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () async {
+                final name = nameController.text.trim();
+                if (name.isNotEmpty) {
+                  final record = QrRecord(
+                    id: const Uuid().v4(),
+                    name: name,
+                    content: value,
+                    type: 'scanned',
+                    timestamp: DateTime.now(),
+                  );
+                  await StorageService.addRecord(record);
+                  if (context.mounted) {
+                    Navigator.pop(context); // Close dialog
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Saved to history successfully!'),
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Color(0xFF10B981),
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
