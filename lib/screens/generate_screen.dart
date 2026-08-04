@@ -32,7 +32,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -51,7 +51,10 @@ class _GenerateScreenState extends State<GenerateScreen> {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -61,7 +64,10 @@ class _GenerateScreenState extends State<GenerateScreen> {
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.all(12),
                       ),
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 20,
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                     const Text(
@@ -77,16 +83,19 @@ class _GenerateScreenState extends State<GenerateScreen> {
                   ],
                 ),
               ),
-              
+
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 16.0,
+                  ),
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 20),
-                      
+
                       // QR Display Area
                       Center(
                         child: AnimatedContainer(
@@ -138,7 +147,9 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                     borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFFEC4899).withOpacity(0.25),
+                                        color: const Color(
+                                          0xFFEC4899,
+                                        ).withOpacity(0.25),
                                         blurRadius: 30,
                                         offset: const Offset(0, 10),
                                       ),
@@ -154,7 +165,9 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                         child: Text(
                                           'Error generating QR code',
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(color: Colors.redAccent),
+                                          style: TextStyle(
+                                            color: Colors.redAccent,
+                                          ),
                                         ),
                                       );
                                     },
@@ -162,9 +175,9 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                 ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 40),
-                      
+
                       // Input Label
                       const Text(
                         'Enter URL or Plain Text',
@@ -175,19 +188,27 @@ class _GenerateScreenState extends State<GenerateScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      
+
                       // Text Field
                       TextField(
                         controller: _textController,
                         maxLines: 4,
                         minLines: 1,
-                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
                         decoration: InputDecoration(
                           hintText: 'https://example.com',
-                          hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
+                          hintStyle: TextStyle(
+                            color: Colors.white.withOpacity(0.2),
+                          ),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.04),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 16,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide.none,
@@ -201,24 +222,30 @@ class _GenerateScreenState extends State<GenerateScreen> {
                           ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Quick Actions
                       Row(
                         children: [
                           Expanded(
                             child: ElevatedButton.icon(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFEC4899), // Pink 500
+                                backgroundColor: const Color(
+                                  0xFFEC4899,
+                                ), // Pink 500
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 elevation: 0,
-                                disabledBackgroundColor: Colors.white.withOpacity(0.05),
-                                disabledForegroundColor: Colors.white.withOpacity(0.2),
+                                disabledBackgroundColor: Colors.white
+                                    .withOpacity(0.05),
+                                disabledForegroundColor: Colors.white
+                                    .withOpacity(0.2),
                               ),
                               onPressed: _qrData.isEmpty
                                   ? null
@@ -238,7 +265,9 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                 padding: const EdgeInsets.all(14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                  side: BorderSide(
+                                    color: Colors.white.withOpacity(0.1),
+                                  ),
                                 ),
                               ),
                               icon: const Icon(Icons.clear_rounded, size: 22),
@@ -246,7 +275,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                 _textController.clear();
                               },
                             ),
-                          ]
+                          ],
                         ],
                       ),
                     ],
