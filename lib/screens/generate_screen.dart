@@ -169,26 +169,33 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                       ),
                                     ],
                             ),
-                            child: Opacity(
-                              opacity: _qrData.isEmpty ? 0.15 : 1.0,
-                              child: QrImageView(
-                                data: _qrData.isEmpty ? 'QR Code' : _qrData,
-                                version: QrVersions.auto,
-                                size: 200.0,
-                                gapless: false,
-                                errorStateBuilder: (cxt, err) {
-                                  return const Center(
-                                    child: Text(
-                                      'Error generating QR code',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.redAccent,
-                                      ),
+                            child: _qrData.isEmpty
+                                ? SizedBox(
+                                    width: 200,
+                                    height: 200,
+                                    child: Icon(
+                                      Icons.qr_code_2_rounded,
+                                      size: 100,
+                                      color: Colors.black.withValues(alpha: 0.15),
                                     ),
-                                  );
-                                },
-                              ),
-                            ),
+                                  )
+                                : QrImageView(
+                                    data: _qrData,
+                                    version: QrVersions.auto,
+                                    size: 200.0,
+                                    gapless: false,
+                                    errorStateBuilder: (cxt, err) {
+                                      return const Center(
+                                        child: Text(
+                                          'Error generating QR code',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                           ),
                         ),
                       ),
