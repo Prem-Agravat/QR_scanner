@@ -148,64 +148,48 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                     )
                                   ],
                           ),
-                          child: _qrData.isEmpty
-                              ? Container(
-                                  width: 200,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.03),
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.qr_code_2_rounded,
-                                        size: 72,
-                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.15),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: _qrData.isEmpty
+                                  ? [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.05),
+                                        blurRadius: 15,
+                                        offset: const Offset(0, 5),
                                       ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        'Waiting for text...',
-                                        style: TextStyle(
-                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(24),
-                                    boxShadow: [
+                                    ]
+                                  : [
                                       BoxShadow(
                                         color: const Color(0xFFEC4899).withValues(alpha: 0.25),
                                         blurRadius: 30,
                                         offset: const Offset(0, 10),
                                       ),
                                     ],
-                                  ),
-                                  child: QrImageView(
-                                    data: _qrData,
-                                    version: QrVersions.auto,
-                                    size: 200.0,
-                                    gapless: false,
-                                    errorStateBuilder: (cxt, err) {
-                                      return const Center(
-                                        child: Text(
-                                          'Error generating QR code',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.redAccent,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
+                            ),
+                            child: Opacity(
+                              opacity: _qrData.isEmpty ? 0.15 : 1.0,
+                              child: QrImageView(
+                                data: _qrData.isEmpty ? 'QR Code' : _qrData,
+                                version: QrVersions.auto,
+                                size: 200.0,
+                                gapless: false,
+                                errorStateBuilder: (cxt, err) {
+                                  return const Center(
+                                    child: Text(
+                                      'Error generating QR code',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.redAccent,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       
