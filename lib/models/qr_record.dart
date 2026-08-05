@@ -14,18 +14,18 @@ class QrRecord {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'content': content,
-        'type': type,
-        'timestamp': timestamp.toIso8601String(),
-      };
+    'id': id,
+    'name': name,
+    'content': content,
+    'type': type,
+    'timestamp': timestamp.toIso8601String(),
+  };
 
   factory QrRecord.fromJson(Map<String, dynamic> json) => QrRecord(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        content: json['content'] as String,
-        type: json['type'] as String,
-        timestamp: DateTime.parse(json['timestamp'] as String),
-      );
+    id: json['id'] as String,
+    name: json['name'] as String,
+    content: json['content'] as String,
+    type: json['type'] as String,
+    timestamp: DateTime.parse(json['timestamp'] as String),
+  );
 }

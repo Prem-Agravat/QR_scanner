@@ -20,14 +20,14 @@ class HomeScreen extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
+                    const Color(0xFF0B0F19), // Deep Slate Navy
                     const Color(0xFF0F172A), // Slate 900
-                    const Color(0xFF1E1B4B), // Indigo 950
                     const Color(0xFF020617), // Slate 955
                   ]
                 : [
+                    const Color(0xFFF8FAFC), // Slate 50
                     const Color(0xFFF1F5F9), // Slate 100
                     const Color(0xFFE2E8F0), // Slate 200
-                    const Color(0xFFF8FAFC), // Slate 50
                   ],
           ),
         ),
@@ -35,7 +35,10 @@ class HomeScreen extends StatelessWidget {
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 16.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -47,10 +50,14 @@ class HomeScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.1,
+                          ),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.2,
+                            ),
                             width: 1.0,
                           ),
                         ),
@@ -62,22 +69,29 @@ class HomeScreen extends StatelessWidget {
                       ),
                       IconButton(
                         style: IconButton.styleFrom(
-                          backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+                          backgroundColor: isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.05),
                           foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.all(12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                             side: BorderSide(
-                              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withValues(alpha: 0.1),
                             ),
                           ),
                         ),
                         icon: Icon(
-                          isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                          isDark
+                              ? Icons.light_mode_rounded
+                              : Icons.dark_mode_rounded,
                           size: 24,
                         ),
                         onPressed: () {
-                          themeNotifier.value = isDark ? ThemeMode.light : ThemeMode.dark;
+                          themeNotifier.value = isDark
+                              ? ThemeMode.light
+                              : ThemeMode.dark;
                         },
                       ),
                     ],
@@ -100,21 +114,20 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  
+
                   // Cards
                   _buildDashboardCard(
                     context,
                     title: 'Scan QR Code',
                     subtitle: 'Use camera to scan & extract info',
                     icon: Icons.filter_center_focus_rounded,
-                    gradientColors: [
-                      const Color(0xFF6366F1), // Indigo 500
-                      const Color(0xFF3B82F6), // Blue 500
-                    ],
+                    accentColor: theme.colorScheme.primary, // Cobalt Blue
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const ScanScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const ScanScreen(),
+                        ),
                       );
                     },
                   ),
@@ -124,14 +137,13 @@ class HomeScreen extends StatelessWidget {
                     title: 'Generate QR Code',
                     subtitle: 'Create codes from URLs or custom text',
                     icon: Icons.qr_code_rounded,
-                    gradientColors: [
-                      const Color(0xFFEC4899), // Pink 500
-                      const Color(0xFF8B5CF6), // Purple 500
-                    ],
+                    accentColor: theme.colorScheme.secondary, // Titanium Teal
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const GenerateScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const GenerateScreen(),
+                        ),
                       );
                     },
                   ),
@@ -141,19 +153,18 @@ class HomeScreen extends StatelessWidget {
                     title: 'Saved History',
                     subtitle: 'View your scanned & generated codes',
                     icon: Icons.history_rounded,
-                    gradientColors: [
-                      const Color(0xFF8B5CF6), // Purple 500
-                      const Color(0xFF06B6D4), // Cyan 500
-                    ],
+                    accentColor: const Color(0xFF6366F1), // Professional Indigo
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const HistoryScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const HistoryScreen(),
+                        ),
                       );
                     },
                   ),
                   const SizedBox(height: 40),
-                  
+
                   // Footer
                   Text(
                     'Developed with Flutter',
@@ -178,35 +189,45 @@ class HomeScreen extends StatelessWidget {
     required String title,
     required String subtitle,
     required IconData icon,
-    required List<Color> gradientColors,
+    required Color accentColor,
     required VoidCallback onTap,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            gradientColors[0].withValues(alpha: 0.85),
-            gradientColors[1].withValues(alpha: 0.85),
-          ],
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.05),
+          width: 1.0,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: gradientColors[0].withValues(alpha: 0.35),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        boxShadow: isDark
+            ? [
+                BoxShadow(
+                  color: accentColor.withValues(alpha: 0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(24),
-          splashColor: Colors.white.withValues(alpha: 0.15),
-          highlightColor: Colors.white.withValues(alpha: 0.05),
+          splashColor: accentColor.withValues(alpha: 0.1),
+          highlightColor: accentColor.withValues(alpha: 0.05),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Row(
@@ -217,9 +238,9 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           letterSpacing: -0.5,
                         ),
@@ -228,7 +249,9 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.85),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.5,
+                          ),
                           fontSize: 14,
                         ),
                       ),
@@ -239,14 +262,14 @@ class HomeScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: accentColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
+                    border: Border.all(
+                      color: accentColor.withValues(alpha: 0.2),
+                      width: 1.0,
+                    ),
                   ),
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: 32,
-                  ),
+                  child: Icon(icon, color: accentColor, size: 28),
                 ),
               ],
             ),

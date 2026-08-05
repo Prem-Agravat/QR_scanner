@@ -37,7 +37,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   List<QrRecord> get _filteredRecords {
     if (_filter == 'All') return _records;
-    return _records.where((r) => r.type.toLowerCase() == _filter.toLowerCase()).toList();
+    return _records
+        .where((r) => r.type.toLowerCase() == _filter.toLowerCase())
+        .toList();
   }
 
   String _formatDate(DateTime dt) {
@@ -90,19 +92,27 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Header (Title & Type)
                 Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: (record.type == 'scanned' ? const Color(0xFF6366F1) : const Color(0xFFEC4899)).withValues(alpha: 0.15),
+                        color:
+                            (record.type == 'scanned'
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.secondary)
+                                .withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        record.type == 'scanned' ? Icons.filter_center_focus_rounded : Icons.qr_code_rounded,
-                        color: record.type == 'scanned' ? const Color(0xFF818CF8) : const Color(0xFFF472B6),
+                        record.type == 'scanned'
+                            ? Icons.filter_center_focus_rounded
+                            : Icons.qr_code_rounded,
+                        color: record.type == 'scanned'
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.secondary,
                         size: 24,
                       ),
                     ),
@@ -123,7 +133,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           Text(
                             _formatDate(record.timestamp),
                             style: TextStyle(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.4,
+                              ),
                               fontSize: 12,
                             ),
                           ),
@@ -164,10 +176,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   padding: const EdgeInsets.all(16),
                   constraints: const BoxConstraints(maxHeight: 120),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.04),
+                    color: isDark
+                        ? Colors.black.withValues(alpha: 0.2)
+                        : Colors.black.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.05,
+                      ),
                     ),
                   ),
                   child: SingleChildScrollView(
@@ -175,7 +191,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     child: SelectableText(
                       record.content,
                       style: TextStyle(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.8,
+                        ),
                         fontSize: 14,
                         fontFamily: 'monospace',
                       ),
@@ -190,17 +208,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                          backgroundColor: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.05),
                           foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+                            side: BorderSide(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.1,
+                              ),
+                            ),
                           ),
                           elevation: 0,
                         ),
                         onPressed: () {
-                          Clipboard.setData(ClipboardData(text: record.content));
+                          Clipboard.setData(
+                            ClipboardData(text: record.content),
+                          );
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Copied to clipboard'),
@@ -217,17 +242,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                          backgroundColor: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.05),
                           foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+                            side: BorderSide(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.1,
+                              ),
+                            ),
                           ),
                           elevation: 0,
                         ),
                         onPressed: () {
-                          SharePlus.instance.share(ShareParams(text: record.content));
+                          SharePlus.instance.share(
+                            ShareParams(text: record.content),
+                          );
                         },
                         icon: const Icon(Icons.share_rounded, size: 20),
                         label: const Text('Share'),
@@ -251,7 +283,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     onPressed: () async {
                       final url = Uri.parse(record.content);
                       if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                        await launchUrl(
+                          url,
+                          mode: LaunchMode.externalApplication,
+                        );
                       }
                     },
                     icon: const Icon(Icons.open_in_new_rounded, size: 20),
@@ -268,7 +303,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(color: Colors.redAccent.withValues(alpha: 0.2)),
+                      side: BorderSide(
+                        color: Colors.redAccent.withValues(alpha: 0.2),
+                      ),
                     ),
                     elevation: 0,
                   ),
@@ -310,14 +347,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
+                    const Color(0xFF0B0F19), // Deep Slate Navy
                     const Color(0xFF0F172A), // Slate 900
-                    const Color(0xFF1E1B4B), // Indigo 955
                     const Color(0xFF020617), // Slate 955
                   ]
                 : [
+                    const Color(0xFFF8FAFC), // Slate 50
                     const Color(0xFFF1F5F9), // Slate 100
                     const Color(0xFFE2E8F0), // Slate 200
-                    const Color(0xFFF8FAFC), // Slate 50
                   ],
           ),
         ),
@@ -327,17 +364,25 @@ class _HistoryScreenState extends State<HistoryScreen> {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       style: IconButton.styleFrom(
-                        backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                        backgroundColor: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.05,
+                        ),
                         foregroundColor: theme.colorScheme.onSurface,
                         padding: const EdgeInsets.all(12),
                       ),
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 20,
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                     Text(
@@ -356,7 +401,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               // Filter Tabs Row
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 12.0,
+                ),
                 child: Row(
                   children: ['All', 'Scanned', 'Generated'].map((type) {
                     final isSelected = _filter == type;
@@ -371,19 +419,36 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         borderRadius: BorderRadius.circular(12),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
-                            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                            color: isSelected
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.05,
+                                  ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isSelected ? Colors.transparent : theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                              color: isSelected
+                                  ? Colors.transparent
+                                  : theme.colorScheme.onSurface.withValues(
+                                      alpha: 0.1,
+                                    ),
                             ),
                           ),
                           child: Text(
                             type,
                             style: TextStyle(
-                              color: isSelected ? Colors.white : theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              color: isSelected
+                                  ? Colors.white
+                                  : theme.colorScheme.onSurface.withValues(
+                                      alpha: 0.7,
+                                    ),
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                               fontSize: 14,
                             ),
                           ),
@@ -397,18 +462,25 @@ class _HistoryScreenState extends State<HistoryScreen> {
               // List area
               Expanded(
                 child: _isLoading
-                    ? Center(child: CircularProgressIndicator(color: theme.colorScheme.primary))
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: theme.colorScheme.primary,
+                        ),
+                      )
                     : _filteredRecords.isEmpty
-                        ? _buildEmptyState(theme)
-                        : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: _filteredRecords.length,
-                            itemBuilder: (context, index) {
-                              final record = _filteredRecords[index];
-                              return _buildRecordCard(record, theme, isDark);
-                            },
-                          ),
+                    ? _buildEmptyState(theme)
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: _filteredRecords.length,
+                        itemBuilder: (context, index) {
+                          final record = _filteredRecords[index];
+                          return _buildRecordCard(record, theme, isDark);
+                        },
+                      ),
               ),
             ],
           ),
@@ -458,7 +530,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withValues(alpha: isDark ? 0.06 : 0.08),
+          color: theme.colorScheme.onSurface.withValues(
+            alpha: isDark ? 0.06 : 0.08,
+          ),
         ),
         boxShadow: isDark
             ? []
@@ -467,7 +541,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   color: Colors.black.withValues(alpha: 0.03),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
-                )
+                ),
               ],
       ),
       child: Material(
@@ -483,12 +557,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: (isScanned ? const Color(0xFF6366F1) : const Color(0xFFEC4899)).withValues(alpha: 0.15),
+                    color:
+                        (isScanned
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.secondary)
+                            .withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    isScanned ? Icons.filter_center_focus_rounded : Icons.qr_code_rounded,
-                    color: isScanned ? const Color(0xFF818CF8) : const Color(0xFFF472B6),
+                    isScanned
+                        ? Icons.filter_center_focus_rounded
+                        : Icons.qr_code_rounded,
+                    color: isScanned
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.secondary,
                     size: 24,
                   ),
                 ),
@@ -515,7 +597,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.5,
+                          ),
                           fontSize: 13,
                         ),
                       ),
@@ -523,7 +607,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       Text(
                         _formatDate(record.timestamp),
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.3,
+                          ),
                           fontSize: 11,
                         ),
                       ),

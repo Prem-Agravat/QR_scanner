@@ -93,14 +93,16 @@ class _ScanScreenState extends State<ScanScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Result Title
                 Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                        color: theme.colorScheme.primary.withValues(
+                          alpha: 0.15,
+                        ),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -121,16 +123,20 @@ class _ScanScreenState extends State<ScanScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Scanned Value Container
                 Container(
                   padding: const EdgeInsets.all(16),
                   constraints: const BoxConstraints(maxHeight: 180),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.04),
+                    color: isDark
+                        ? Colors.black.withValues(alpha: 0.2)
+                        : Colors.black.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.05,
+                      ),
                     ),
                   ),
                   child: SingleChildScrollView(
@@ -138,7 +144,9 @@ class _ScanScreenState extends State<ScanScreen> {
                     child: SelectableText(
                       value,
                       style: TextStyle(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.8,
+                        ),
                         fontSize: 15,
                         height: 1.4,
                         fontFamily: 'monospace',
@@ -147,7 +155,7 @@ class _ScanScreenState extends State<ScanScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Action Buttons
                 Row(
                   children: [
@@ -155,12 +163,17 @@ class _ScanScreenState extends State<ScanScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                          backgroundColor: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.05),
                           foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+                            side: BorderSide(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.1,
+                              ),
+                            ),
                           ),
                           elevation: 0,
                         ),
@@ -179,17 +192,22 @@ class _ScanScreenState extends State<ScanScreen> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    
+
                     // Share button
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                          backgroundColor: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.05),
                           foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+                            side: BorderSide(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.1,
+                              ),
+                            ),
                           ),
                           elevation: 0,
                         ),
@@ -207,7 +225,8 @@ class _ScanScreenState extends State<ScanScreen> {
                 // Save to History button
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF10B981), // Emerald 500
+                    backgroundColor:
+                        theme.colorScheme.secondary, // Titanium Teal
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -222,7 +241,7 @@ class _ScanScreenState extends State<ScanScreen> {
                   label: const Text('Save to History'),
                 ),
                 const SizedBox(height: 12),
-                
+
                 // URL launcher button if URL
                 if (isUrl) ...[
                   ElevatedButton.icon(
@@ -238,7 +257,10 @@ class _ScanScreenState extends State<ScanScreen> {
                     onPressed: () async {
                       final url = Uri.parse(value);
                       if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                        await launchUrl(
+                          url,
+                          mode: LaunchMode.externalApplication,
+                        );
                       } else {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -255,11 +277,13 @@ class _ScanScreenState extends State<ScanScreen> {
                   ),
                   const SizedBox(height: 12),
                 ],
-                
+
                 // Rescan button
                 TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    foregroundColor: theme.colorScheme.onSurface.withValues(
+                      alpha: 0.6,
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   onPressed: () {
@@ -285,7 +309,8 @@ class _ScanScreenState extends State<ScanScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     final TextEditingController nameController = TextEditingController(
-      text: 'Scanned Code - ${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}',
+      text:
+          'Scanned Code - ${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}',
     );
 
     showDialog(
@@ -295,11 +320,16 @@ class _ScanScreenState extends State<ScanScreen> {
           backgroundColor: theme.colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
-            side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+            side: BorderSide(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+            ),
           ),
           title: Text(
             'Save QR Code',
-            style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: theme.colorScheme.onSurface,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -307,7 +337,10 @@ class _ScanScreenState extends State<ScanScreen> {
             children: [
               Text(
                 'Give this QR code a specific name:',
-                style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 14),
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  fontSize: 14,
+                ),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -315,17 +348,27 @@ class _ScanScreenState extends State<ScanScreen> {
                 style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: InputDecoration(
                   hintText: 'Enter specific name...',
-                  hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+                  hintStyle: TextStyle(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                  ),
                   filled: true,
-                  fillColor: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.04),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  fillColor: isDark
+                      ? Colors.black.withValues(alpha: 0.2)
+                      : Colors.black.withValues(alpha: 0.04),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                    borderSide: BorderSide(
+                      color: theme.colorScheme.secondary,
+                      width: 1.5,
+                    ),
                   ),
                 ),
               ),
@@ -334,13 +377,20 @@ class _ScanScreenState extends State<ScanScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel', style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF10B981), // Emerald 500
+                backgroundColor: theme.colorScheme.secondary,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () async {
                 final name = nameController.text.trim();
@@ -356,10 +406,10 @@ class _ScanScreenState extends State<ScanScreen> {
                   if (context.mounted) {
                     Navigator.pop(context); // Close dialog
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Saved to history successfully!'),
+                      SnackBar(
+                        content: const Text('Saved to history successfully!'),
                         behavior: SnackBarBehavior.floating,
-                        backgroundColor: Color(0xFF10B981),
+                        backgroundColor: theme.colorScheme.secondary,
                       ),
                     );
                   }
@@ -379,7 +429,7 @@ class _ScanScreenState extends State<ScanScreen> {
     final double scanWindowHeight = scanWindowWidth;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    
+
     final Rect scanWindow = Rect.fromLTWH(
       (screenWidth - scanWindowWidth) / 2,
       (screenHeight - scanWindowHeight) / 2 - 30,
@@ -408,19 +458,31 @@ class _ScanScreenState extends State<ScanScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
+                      const Icon(
+                        Icons.error_outline_rounded,
+                        color: Colors.redAccent,
+                        size: 48,
+                      ),
                       const SizedBox(height: 16),
                       const Text(
                         'Camera Error',
-                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        error.errorCode == MobileScannerErrorCode.controllerUninitialized
+                        error.errorCode ==
+                                MobileScannerErrorCode.controllerUninitialized
                             ? 'The scanner controller is initializing...'
                             : 'Please verify camera permissions in settings.',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.white60, fontSize: 14),
+                        style: const TextStyle(
+                          color: Colors.white60,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -428,20 +490,23 @@ class _ScanScreenState extends State<ScanScreen> {
               );
             },
           ),
-          
+
           // Transparent overlay with cutout
           CustomPaint(
             size: Size(screenWidth, screenHeight),
             painter: ScannerOverlay(scanWindow: scanWindow),
           ),
-          
+
           // Laser sweeping animated line
           ScanningLine(scanWindow: scanWindow),
-          
+
           // Header / Controls Overlay
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: Column(
                 children: [
                   Row(
@@ -454,7 +519,10 @@ class _ScanScreenState extends State<ScanScreen> {
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.all(12),
                         ),
-                        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 20,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
                       const Text(
@@ -474,11 +542,16 @@ class _ScanScreenState extends State<ScanScreen> {
                   // Camera control buttons
                   Container(
                     margin: const EdgeInsets.only(bottom: 24),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(32),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.1),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -490,10 +563,16 @@ class _ScanScreenState extends State<ScanScreen> {
                             builder: (context, state, child) {
                               switch (state.torchState) {
                                 case TorchState.on:
-                                  return const Icon(Icons.flash_on_rounded, color: Color(0xFFFBBF24));
+                                  return const Icon(
+                                    Icons.flash_on_rounded,
+                                    color: Color(0xFFFBBF24),
+                                  );
                                 case TorchState.off:
                                 default:
-                                  return const Icon(Icons.flash_off_rounded, color: Colors.white54);
+                                  return const Icon(
+                                    Icons.flash_off_rounded,
+                                    color: Colors.white54,
+                                  );
                               }
                             },
                           ),
@@ -507,10 +586,16 @@ class _ScanScreenState extends State<ScanScreen> {
                             builder: (context, state, child) {
                               switch (state.cameraDirection) {
                                 case CameraFacing.front:
-                                  return const Icon(Icons.camera_front_rounded, color: Color(0xFF818CF8));
+                                  return const Icon(
+                                    Icons.camera_front_rounded,
+                                    color: Color(0xFF818CF8),
+                                  );
                                 case CameraFacing.back:
                                 default:
-                                  return const Icon(Icons.camera_rear_rounded, color: Colors.white54);
+                                  return const Icon(
+                                    Icons.camera_rear_rounded,
+                                    color: Colors.white54,
+                                  );
                               }
                             },
                           ),
@@ -531,23 +616,18 @@ class _ScanScreenState extends State<ScanScreen> {
 
 // Custom Painter for scanner cutout
 class ScannerOverlay extends CustomPainter {
-  const ScannerOverlay({
-    required this.scanWindow,
-    this.borderRadius = 24.0,
-  });
+  const ScannerOverlay({required this.scanWindow, this.borderRadius = 24.0});
 
   final Rect scanWindow;
   final double borderRadius;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final backgroundPath = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final backgroundPath = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     final cutoutPath = Path()
       ..addRRect(
-        RRect.fromRectAndRadius(
-          scanWindow,
-          Radius.circular(borderRadius),
-        ),
+        RRect.fromRectAndRadius(scanWindow, Radius.circular(borderRadius)),
       );
 
     final backgroundPaint = Paint()
@@ -564,13 +644,14 @@ class ScannerOverlay extends CustomPainter {
 
     // Draw active-looking border corners
     final borderPaint = Paint()
-      ..color = const Color(0xFF6366F1) // Indigo 500
+      ..color =
+          const Color(0xFF2563EB) // Cobalt Blue
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4.0;
 
     final borderPath = Path();
     const double length = 24.0;
-    
+
     // Top Left Corner
     borderPath.moveTo(scanWindow.left, scanWindow.top + length);
     borderPath.lineTo(scanWindow.left, scanWindow.top);
@@ -596,7 +677,8 @@ class ScannerOverlay extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant ScannerOverlay oldDelegate) {
-    return oldDelegate.scanWindow != scanWindow || oldDelegate.borderRadius != borderRadius;
+    return oldDelegate.scanWindow != scanWindow ||
+        oldDelegate.borderRadius != borderRadius;
   }
 }
 
@@ -609,7 +691,8 @@ class ScanningLine extends StatefulWidget {
   State<ScanningLine> createState() => _ScanningLineState();
 }
 
-class _ScanningLineState extends State<ScanningLine> with SingleTickerProviderStateMixin {
+class _ScanningLineState extends State<ScanningLine>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -632,7 +715,9 @@ class _ScanningLineState extends State<ScanningLine> with SingleTickerProviderSt
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        final position = widget.scanWindow.top + (widget.scanWindow.height * _controller.value);
+        final position =
+            widget.scanWindow.top +
+            (widget.scanWindow.height * _controller.value);
         return Positioned(
           left: widget.scanWindow.left + 8,
           top: position,
@@ -642,7 +727,7 @@ class _ScanningLineState extends State<ScanningLine> with SingleTickerProviderSt
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.8),
+                  color: const Color(0xFF2563EB).withValues(alpha: 0.8),
                   blurRadius: 8,
                   spreadRadius: 2,
                 ),
@@ -650,7 +735,7 @@ class _ScanningLineState extends State<ScanningLine> with SingleTickerProviderSt
               gradient: const LinearGradient(
                 colors: [
                   Colors.transparent,
-                  Color(0xFF6366F1),
+                  Color(0xFF2563EB),
                   Colors.transparent,
                 ],
               ),

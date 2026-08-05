@@ -26,9 +26,9 @@ class QRApp extends StatelessWidget {
             useMaterial3: true,
             brightness: Brightness.light,
             colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF6366F1), // Indigo primary
+              seedColor: const Color(0xFF2563EB), // Cobalt primary
               brightness: Brightness.light,
-              secondary: const Color(0xFFEC4899), // Pink secondary
+              secondary: const Color(0xFF0D9488), // Titanium Teal secondary
               surface: Colors.white,
             ),
             scaffoldBackgroundColor: const Color(0xFFF8FAFC),
@@ -37,9 +37,11 @@ class QRApp extends StatelessWidget {
               elevation: 0,
             ),
             snackBarTheme: SnackBarThemeData(
-              backgroundColor: const Color(0xFF1E293B),
+              backgroundColor: const Color(0xFF0F172A),
               contentTextStyle: const TextStyle(color: Colors.white),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           ),
           // Dark Mode Theme configuration
@@ -47,9 +49,9 @@ class QRApp extends StatelessWidget {
             useMaterial3: true,
             brightness: Brightness.dark,
             colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF6366F1), // Indigo primary
+              seedColor: const Color(0xFF2563EB), // Cobalt primary
               brightness: Brightness.dark,
-              secondary: const Color(0xFFEC4899), // Pink secondary
+              secondary: const Color(0xFF0D9488), // Titanium Teal secondary
               surface: const Color(0xFF0F172A), // Slate 900
             ),
             scaffoldBackgroundColor: const Color(0xFF020617),
@@ -60,7 +62,9 @@ class QRApp extends StatelessWidget {
             snackBarTheme: SnackBarThemeData(
               backgroundColor: const Color(0xFF1E293B),
               contentTextStyle: const TextStyle(color: Colors.white),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           ),
           home: const HomeScreen(),
