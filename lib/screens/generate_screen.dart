@@ -96,8 +96,8 @@ class _GenerateScreenState extends State<GenerateScreen> {
                   children: [
                     IconButton(
                       style: IconButton.styleFrom(
-                        backgroundColor: theme.colorScheme.onBackground.withOpacity(0.05),
-                        foregroundColor: theme.colorScheme.onBackground,
+                        backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                        foregroundColor: theme.colorScheme.onSurface,
                         padding: const EdgeInsets.all(12),
                       ),
                       icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -106,7 +106,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                     Text(
                       'Generator',
                       style: TextStyle(
-                        color: theme.colorScheme.onBackground,
+                        color: theme.colorScheme.onSurface,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         letterSpacing: -0.5,
@@ -132,17 +132,17 @@ class _GenerateScreenState extends State<GenerateScreen> {
                           duration: const Duration(milliseconds: 300),
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+                            color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
                             borderRadius: BorderRadius.circular(32),
                             border: Border.all(
-                              color: isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.05),
+                              color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
                               width: 1.0,
                             ),
                             boxShadow: isDark
                                 ? []
                                 : [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.04),
+                                      color: Colors.black.withValues(alpha: 0.04),
                                       blurRadius: 20,
                                       offset: const Offset(0, 8),
                                     )
@@ -153,7 +153,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                   width: 200,
                                   height: 200,
                                   decoration: BoxDecoration(
-                                    color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.03),
+                                    color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.03),
                                     borderRadius: BorderRadius.circular(24),
                                   ),
                                   child: Column(
@@ -162,13 +162,13 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                       Icon(
                                         Icons.qr_code_2_rounded,
                                         size: 72,
-                                        color: theme.colorScheme.onBackground.withOpacity(0.15),
+                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.15),
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
                                         'Waiting for text...',
                                         style: TextStyle(
-                                          color: theme.colorScheme.onBackground.withOpacity(0.3),
+                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                                           fontSize: 14,
                                         ),
                                       ),
@@ -182,7 +182,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                     borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFFEC4899).withOpacity(0.25),
+                                        color: const Color(0xFFEC4899).withValues(alpha: 0.25),
                                         blurRadius: 30,
                                         offset: const Offset(0, 10),
                                       ),
@@ -215,7 +215,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                       Text(
                         'QR Code Name / Label',
                         style: TextStyle(
-                          color: theme.colorScheme.onBackground.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -227,16 +227,16 @@ class _GenerateScreenState extends State<GenerateScreen> {
                         controller: _nameController,
                         maxLines: 1,
                         style: TextStyle(
-                          color: theme.colorScheme.onBackground,
+                          color: theme.colorScheme.onSurface,
                           fontSize: 16,
                         ),
                         decoration: InputDecoration(
                           hintText: 'e.g. My Website QR',
                           hintStyle: TextStyle(
-                            color: theme.colorScheme.onBackground.withOpacity(0.2),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                           ),
                           filled: true,
-                          fillColor: theme.colorScheme.onBackground.withOpacity(0.04),
+                          fillColor: theme.colorScheme.onSurface.withValues(alpha: 0.04),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 20,
                             vertical: 16,
@@ -260,7 +260,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                       Text(
                         'Enter URL or Plain Text',
                         style: TextStyle(
-                          color: theme.colorScheme.onBackground.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -273,16 +273,16 @@ class _GenerateScreenState extends State<GenerateScreen> {
                         maxLines: 4,
                         minLines: 1,
                         style: TextStyle(
-                          color: theme.colorScheme.onBackground,
+                          color: theme.colorScheme.onSurface,
                           fontSize: 16,
                         ),
                         decoration: InputDecoration(
                           hintText: 'https://example.com',
                           hintStyle: TextStyle(
-                            color: theme.colorScheme.onBackground.withOpacity(0.2),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                           ),
                           filled: true,
-                          fillColor: theme.colorScheme.onBackground.withOpacity(0.04),
+                          fillColor: theme.colorScheme.onSurface.withValues(alpha: 0.04),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 20,
                             vertical: 16,
@@ -318,8 +318,8 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 elevation: 0,
-                                disabledBackgroundColor: theme.colorScheme.onBackground.withOpacity(0.05),
-                                disabledForegroundColor: theme.colorScheme.onBackground.withOpacity(0.2),
+                                disabledBackgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                                disabledForegroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                               ),
                               onPressed: _qrData.isEmpty
                                   ? null
@@ -343,8 +343,8 @@ class _GenerateScreenState extends State<GenerateScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 elevation: 0,
-                                disabledBackgroundColor: theme.colorScheme.onBackground.withOpacity(0.05),
-                                disabledForegroundColor: theme.colorScheme.onBackground.withOpacity(0.2),
+                                disabledBackgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                                disabledForegroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                               ),
                               onPressed: (_qrData.isEmpty || _nameController.text.trim().isEmpty)
                                   ? null
@@ -360,12 +360,12 @@ class _GenerateScreenState extends State<GenerateScreen> {
                       if (_qrData.isNotEmpty || _nameController.text.isNotEmpty) ...[
                         ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.onBackground.withOpacity(0.05),
-                            foregroundColor: theme.colorScheme.onBackground,
+                            backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                            foregroundColor: theme.colorScheme.onSurface,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
-                              side: BorderSide(color: theme.colorScheme.onBackground.withOpacity(0.1)),
+                              side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
                             ),
                             elevation: 0,
                           ),

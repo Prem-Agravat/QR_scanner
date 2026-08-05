@@ -29,7 +29,6 @@ class QRApp extends StatelessWidget {
               seedColor: const Color(0xFF6366F1), // Indigo primary
               brightness: Brightness.light,
               secondary: const Color(0xFFEC4899), // Pink secondary
-              background: const Color(0xFFF8FAFC), // Slate 50
               surface: Colors.white,
             ),
             scaffoldBackgroundColor: const Color(0xFFF8FAFC),
@@ -51,7 +50,6 @@ class QRApp extends StatelessWidget {
               seedColor: const Color(0xFF6366F1), // Indigo primary
               brightness: Brightness.dark,
               secondary: const Color(0xFFEC4899), // Pink secondary
-              background: const Color(0xFF020617), // Slate 950
               surface: const Color(0xFF0F172A), // Slate 900
             ),
             scaffoldBackgroundColor: const Color(0xFF020617),

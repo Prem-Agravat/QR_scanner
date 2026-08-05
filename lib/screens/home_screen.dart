@@ -47,10 +47,10 @@ class HomeScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withOpacity(0.1),
+                          color: theme.colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: theme.colorScheme.primary.withOpacity(0.2),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
                             width: 1.0,
                           ),
                         ),
@@ -62,13 +62,13 @@ class HomeScreen extends StatelessWidget {
                       ),
                       IconButton(
                         style: IconButton.styleFrom(
-                          backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
-                          foregroundColor: theme.colorScheme.onBackground,
+                          backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+                          foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.all(12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                             side: BorderSide(
-                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
                             ),
                           ),
                         ),
@@ -86,7 +86,7 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     'QR Hub',
                     style: theme.textTheme.headlineLarge?.copyWith(
-                      color: theme.colorScheme.onBackground,
+                      color: theme.colorScheme.onSurface,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -0.5,
                     ),
@@ -95,7 +95,7 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     'Scan or generate high-quality QR codes instantly with precision.',
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onBackground.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       height: 1.4,
                     ),
                   ),
@@ -159,7 +159,7 @@ class HomeScreen extends StatelessWidget {
                     'Developed with Flutter',
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onBackground.withOpacity(0.3),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       letterSpacing: 1.0,
                     ),
                   ),
@@ -188,13 +188,13 @@ class HomeScreen extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            gradientColors[0].withOpacity(0.85),
-            gradientColors[1].withOpacity(0.85),
+            gradientColors[0].withValues(alpha: 0.85),
+            gradientColors[1].withValues(alpha: 0.85),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: gradientColors[0].withOpacity(0.35),
+            color: gradientColors[0].withValues(alpha: 0.35),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -205,8 +205,8 @@ class HomeScreen extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(24),
-          splashColor: Colors.white.withOpacity(0.15),
-          highlightColor: Colors.white.withOpacity(0.05),
+          splashColor: Colors.white.withValues(alpha: 0.15),
+          highlightColor: Colors.white.withValues(alpha: 0.05),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Row(
@@ -228,7 +228,7 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.85),
+                          color: Colors.white.withValues(alpha: 0.85),
                           fontSize: 14,
                         ),
                       ),
@@ -239,7 +239,7 @@ class HomeScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(

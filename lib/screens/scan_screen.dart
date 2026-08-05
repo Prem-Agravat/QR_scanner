@@ -59,7 +59,7 @@ class _ScanScreenState extends State<ScanScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) {
         return Container(
           decoration: BoxDecoration(
@@ -70,7 +70,7 @@ class _ScanScreenState extends State<ScanScreen> {
             ),
             border: Border(
               top: BorderSide(
-                color: theme.colorScheme.onSurface.withOpacity(0.08),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
                 width: 1.0,
               ),
             ),
@@ -87,7 +87,7 @@ class _ScanScreenState extends State<ScanScreen> {
                     width: 48,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.onSurface.withOpacity(0.2),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -100,7 +100,7 @@ class _ScanScreenState extends State<ScanScreen> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.15),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -127,10 +127,10 @@ class _ScanScreenState extends State<ScanScreen> {
                   padding: const EdgeInsets.all(16),
                   constraints: const BoxConstraints(maxHeight: 180),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.04),
+                    color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withOpacity(0.05),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
                     ),
                   ),
                   child: SingleChildScrollView(
@@ -138,7 +138,7 @@ class _ScanScreenState extends State<ScanScreen> {
                     child: SelectableText(
                       value,
                       style: TextStyle(
-                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                         fontSize: 15,
                         height: 1.4,
                         fontFamily: 'monospace',
@@ -155,12 +155,12 @@ class _ScanScreenState extends State<ScanScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.onSurface.withOpacity(0.05),
+                          backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
                           foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1)),
+                            side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
                           ),
                           elevation: 0,
                         ),
@@ -184,17 +184,17 @@ class _ScanScreenState extends State<ScanScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.onSurface.withOpacity(0.05),
+                          backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
                           foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1)),
+                            side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
                           ),
                           elevation: 0,
                         ),
                         onPressed: () {
-                          Share.share(value);
+                          SharePlus.instance.share(ShareParams(text: value));
                         },
                         icon: const Icon(Icons.share_rounded, size: 20),
                         label: const Text('Share'),
@@ -259,7 +259,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 // Rescan button
                 TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.onSurface.withOpacity(0.6),
+                    foregroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   onPressed: () {
@@ -295,7 +295,7 @@ class _ScanScreenState extends State<ScanScreen> {
           backgroundColor: theme.colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
-            side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1)),
+            side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
           ),
           title: Text(
             'Save QR Code',
@@ -307,7 +307,7 @@ class _ScanScreenState extends State<ScanScreen> {
             children: [
               Text(
                 'Give this QR code a specific name:',
-                style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.7), fontSize: 14),
+                style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 14),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -315,9 +315,9 @@ class _ScanScreenState extends State<ScanScreen> {
                 style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: InputDecoration(
                   hintText: 'Enter specific name...',
-                  hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.3)),
+                  hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
                   filled: true,
-                  fillColor: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.04),
+                  fillColor: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.04),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -334,7 +334,7 @@ class _ScanScreenState extends State<ScanScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel', style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6))),
+              child: Text('Cancel', style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -450,7 +450,7 @@ class _ScanScreenState extends State<ScanScreen> {
                       // Back Button
                       IconButton(
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.black.withOpacity(0.5),
+                          backgroundColor: Colors.black.withValues(alpha: 0.5),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.all(12),
                         ),
@@ -476,9 +476,9 @@ class _ScanScreenState extends State<ScanScreen> {
                     margin: const EdgeInsets.only(bottom: 24),
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(32),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -551,7 +551,7 @@ class ScannerOverlay extends CustomPainter {
       );
 
     final backgroundPaint = Paint()
-      ..color = Colors.black.withOpacity(0.65)
+      ..color = Colors.black.withValues(alpha: 0.65)
       ..style = PaintingStyle.fill;
 
     final backgroundPathWithCutout = Path.combine(
@@ -642,7 +642,7 @@ class _ScanningLineState extends State<ScanningLine> with SingleTickerProviderSt
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF6366F1).withOpacity(0.8),
+                  color: const Color(0xFF6366F1).withValues(alpha: 0.8),
                   blurRadius: 8,
                   spreadRadius: 2,
                 ),
