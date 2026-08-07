@@ -12,8 +12,8 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const QRApp());
 
-    // Verify that the title "QR Hub" is present on the home page.
-    expect(find.text('QR Hub'), findsOneWidget);
+    // Verify that the greeting "Explorer" is present on the home page.
+    expect(find.textContaining('Explorer'), findsOneWidget);
 
     // Verify that the navigation buttons are present.
     expect(find.text('Scan QR Code'), findsOneWidget);
@@ -23,7 +23,7 @@ void main() {
     // Test Navigation to Generate QR Code screen
     await tester.tap(find.text('Generate QR Code'));
     await tester.pumpAndSettle();
-    expect(find.text('Generator'), findsOneWidget);
+    expect(find.text('QR Designer'), findsOneWidget);
 
     // Back to Dashboard
     await tester.tap(find.byType(IconButton).first);

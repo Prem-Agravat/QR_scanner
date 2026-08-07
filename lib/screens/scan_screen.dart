@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -50,8 +51,218 @@ class _ScanScreenState extends State<ScanScreen> {
     }
   }
 
+  Future<void> _scanFromGallery() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+
+      final BarcodeCapture? capture = await controller.analyzeImage(image.path);
+      if (capture == null || capture.barcodes.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No QR code found in that image. Try another one.'),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+      } else {
+        final String? rawValue = capture.barcodes.first.rawValue;
+        if (rawValue != null) {
+          setState(() {
+            isSheetOpen = true;
+          });
+          controller.stop();
+          _showResultBottomSheet(rawValue);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to read image: $e'),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
+  }
+
+  // Parser helper for QR codes
+  _ParsedContent _parseContent(String value) {
+    final clean = value.trim();
+    
+    // 1. Wi-Fi
+    if (clean.toUpperCase().startsWith('WIFI:')) {
+      final details = <String, String>{};
+      final parts = clean.substring(5).split(';');
+      for (final part in parts) {
+        if (part.startsWith('S:')) details['SSID'] = part.substring(2);
+        if (part.startsWith('P:')) details['Password'] = part.substring(2);
+        if (part.startsWith('T:')) details['Security'] = part.substring(2);
+      }
+      return _ParsedContent(
+        type: 'wifi',
+        title: 'Wi-Fi Network',
+        icon: Icons.wifi_rounded,
+        details: details,
+        primaryActionLabel: 'Copy Password',
+        primaryAction: () {
+          final pass = details['Password'] ?? '';
+          Clipboard.setData(ClipboardData(text: pass));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Wi-Fi Password copied to clipboard'), behavior: SnackBarBehavior.floating),
+          );
+        },
+      );
+    }
+
+    // 2. Email
+    if (clean.toLowerCase().startsWith('mailto:')) {
+      final uri = Uri.parse(clean);
+      final email = uri.path;
+      final details = {'Email': email};
+      final subject = uri.queryParameters['subject'];
+      if (subject != null) details['Subject'] = subject;
+
+      return _ParsedContent(
+        type: 'email',
+        title: 'Email Address',
+        icon: Icons.email_rounded,
+        details: details,
+        primaryActionLabel: 'Send Email',
+        primaryAction: () async {
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          }
+        },
+      );
+    }
+
+    // 3. Phone Call
+    if (clean.toLowerCase().startsWith('tel:')) {
+      final number = clean.substring(4);
+      return _ParsedContent(
+        type: 'phone',
+        title: 'Phone Number',
+        icon: Icons.phone_rounded,
+        details: {'Number': number},
+        primaryActionLabel: 'Call Number',
+        primaryAction: () async {
+          final uri = Uri.parse(clean);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          }
+        },
+      );
+    }
+
+    // 4. SMS
+    if (clean.toLowerCase().startsWith('sms:')) {
+      final details = <String, String>{};
+      final uri = Uri.parse(clean);
+      details['Number'] = uri.path;
+      final body = uri.queryParameters['body'];
+      if (body != null) details['Message'] = body;
+
+      return _ParsedContent(
+        type: 'sms',
+        title: 'SMS Message',
+        icon: Icons.sms_rounded,
+        details: details,
+        primaryActionLabel: 'Send SMS',
+        primaryAction: () async {
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          }
+        },
+      );
+    }
+
+    // 5. Geographic Location
+    if (clean.toLowerCase().startsWith('geo:')) {
+      final coords = clean.substring(4).split('?')[0];
+      return _ParsedContent(
+        type: 'geo',
+        title: 'Location Maps',
+        icon: Icons.map_rounded,
+        details: {'Coordinates': coords},
+        primaryActionLabel: 'Open in Maps',
+        primaryAction: () async {
+          final mapsUrl = Uri.parse('https://www.google.com/maps/search/?api=1&query=$coords');
+          if (await canLaunchUrl(mapsUrl)) {
+            await launchUrl(mapsUrl, mode: LaunchMode.externalApplication);
+          }
+        },
+      );
+    }
+
+    // 6. vCard Contact
+    if (clean.toUpperCase().contains('BEGIN:VCARD')) {
+      final details = <String, String>{};
+      final lines = clean.split('\n');
+      for (final line in lines) {
+        final upper = line.toUpperCase();
+        if (upper.startsWith('FN:')) details['Name'] = line.substring(3).trim();
+        if (upper.startsWith('TEL:')) details['Phone'] = line.substring(4).trim();
+        if (upper.startsWith('EMAIL:')) details['Email'] = line.substring(6).trim();
+        if (upper.startsWith('ORG:')) details['Company'] = line.substring(4).trim();
+      }
+      return _ParsedContent(
+        type: 'vcard',
+        title: 'vCard Contact Card',
+        icon: Icons.contact_phone_rounded,
+        details: details,
+        primaryActionLabel: 'Copy Contact Details',
+        primaryAction: () {
+          final info = details.entries.map((e) => '${e.key}: ${e.value}').join('\n');
+          Clipboard.setData(ClipboardData(text: info));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Contact info copied to clipboard'), behavior: SnackBarBehavior.floating),
+          );
+        },
+      );
+    }
+
+    // 7. URL
+    final isUrl = Uri.tryParse(clean)?.hasAbsolutePath ?? false;
+    if (isUrl) {
+      return _ParsedContent(
+        type: 'url',
+        title: 'Web Link',
+        icon: Icons.link_rounded,
+        details: {'URL': clean},
+        primaryActionLabel: 'Open in Browser',
+        primaryAction: () async {
+          final uri = Uri.parse(clean);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        },
+      );
+    }
+
+    // 8. Plain Text (Default)
+    return _ParsedContent(
+      type: 'text',
+      title: 'Scanned Text',
+      icon: Icons.text_snippet_rounded,
+      details: {'Content': clean},
+      primaryActionLabel: 'Copy Text',
+      primaryAction: () {
+        Clipboard.setData(ClipboardData(text: clean));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Copied to clipboard'), behavior: SnackBarBehavior.floating),
+        );
+      },
+    );
+  }
+
   void _showResultBottomSheet(String value) {
-    final isUrl = Uri.tryParse(value)?.hasAbsolutePath ?? false;
+    final parsed = _parseContent(value);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -81,7 +292,6 @@ class _ScanScreenState extends State<ScanScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Top drag handle
                 Center(
                   child: Container(
                     width: 48,
@@ -94,7 +304,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Result Title
+                // Title Section
                 Row(
                   children: [
                     Container(
@@ -106,14 +316,14 @@ class _ScanScreenState extends State<ScanScreen> {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        isUrl ? Icons.link_rounded : Icons.text_snippet_rounded,
+                        parsed.icon,
                         color: theme.colorScheme.primary,
                         size: 24,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      isUrl ? 'Scanned Link' : 'Scanned Text',
+                      parsed.title,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: 18,
@@ -124,10 +334,9 @@ class _ScanScreenState extends State<ScanScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Scanned Value Container
+                // Scanned Details Cards
                 Container(
                   padding: const EdgeInsets.all(16),
-                  constraints: const BoxConstraints(maxHeight: 180),
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.black.withValues(alpha: 0.2)
@@ -139,27 +348,60 @@ class _ScanScreenState extends State<ScanScreen> {
                       ),
                     ),
                   ),
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: SelectableText(
-                      value,
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.8,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: parsed.details.entries.map((entry) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${entry.key}: ',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                            Expanded(
+                              child: SelectableText(
+                                entry.value,
+                                style: TextStyle(
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
+                                  fontSize: 14,
+                                  fontFamily: entry.key == 'URL' || entry.key == 'Coordinates' ? 'monospace' : null,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        fontSize: 15,
-                        height: 1.4,
-                        fontFamily: 'monospace',
-                      ),
-                    ),
+                      );
+                    }).toList(),
                   ),
                 ),
                 const SizedBox(height: 24),
 
-                // Action Buttons
+                // Primary Action Button (e.g. Open Link / Send Email)
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: parsed.primaryAction,
+                  icon: const Icon(Icons.flash_on_rounded, size: 20),
+                  label: Text(parsed.primaryActionLabel),
+                ),
+                const SizedBox(height: 12),
+
+                // Share / Save / Copy actions row
                 Row(
                   children: [
-                    // Copy button
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
@@ -181,19 +423,16 @@ class _ScanScreenState extends State<ScanScreen> {
                           Clipboard.setData(ClipboardData(text: value));
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Copied to clipboard'),
+                              content: Text('Raw content copied to clipboard'),
                               behavior: SnackBarBehavior.floating,
-                              duration: Duration(seconds: 2),
                             ),
                           );
                         },
                         icon: const Icon(Icons.copy_rounded, size: 20),
-                        label: const Text('Copy'),
+                        label: const Text('Copy Raw'),
                       ),
                     ),
                     const SizedBox(width: 12),
-
-                    // Share button
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
@@ -225,8 +464,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 // Save to History button
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        theme.colorScheme.secondary, // Titanium Teal
+                    backgroundColor: theme.colorScheme.secondary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -242,42 +480,6 @@ class _ScanScreenState extends State<ScanScreen> {
                 ),
                 const SizedBox(height: 12),
 
-                // URL launcher button if URL
-                if (isUrl) ...[
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 0,
-                    ),
-                    onPressed: () async {
-                      final url = Uri.parse(value);
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(
-                          url,
-                          mode: LaunchMode.externalApplication,
-                        );
-                      } else {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Could not open link'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    icon: const Icon(Icons.open_in_new_rounded, size: 20),
-                    label: const Text('Open Link'),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-
                 // Rescan button
                 TextButton(
                   style: TextButton.styleFrom(
@@ -289,7 +491,7 @@ class _ScanScreenState extends State<ScanScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Scan Again'),
+                  child: const Text('Rescan Camera'),
                 ),
               ],
             ),
@@ -309,8 +511,7 @@ class _ScanScreenState extends State<ScanScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     final TextEditingController nameController = TextEditingController(
-      text:
-          'Scanned Code - ${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}',
+      text: 'Scanned Code - ${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}',
     );
 
     showDialog(
@@ -336,7 +537,7 @@ class _ScanScreenState extends State<ScanScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Give this QR code a specific name:',
+                'Give this QR code a name:',
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   fontSize: 14,
@@ -347,7 +548,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 controller: nameController,
                 style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: InputDecoration(
-                  hintText: 'Enter specific name...',
+                  hintText: 'Enter name...',
                   hintStyle: TextStyle(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                   ),
@@ -405,9 +606,10 @@ class _ScanScreenState extends State<ScanScreen> {
                   await StorageService.addRecord(record);
                   if (context.mounted) {
                     Navigator.pop(context); // Close dialog
+                    Navigator.pop(context); // Close bottom sheet
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text('Saved to history successfully!'),
+                        content: const Text('Saved to history!'),
                         behavior: SnackBarBehavior.floating,
                         backgroundColor: theme.colorScheme.secondary,
                       ),
@@ -425,14 +627,14 @@ class _ScanScreenState extends State<ScanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double scanWindowWidth = MediaQuery.of(context).size.width * 0.7;
+    final double scanWindowWidth = MediaQuery.of(context).size.width * 0.72;
     final double scanWindowHeight = scanWindowWidth;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
     final Rect scanWindow = Rect.fromLTWH(
       (screenWidth - scanWindowWidth) / 2,
-      (screenHeight - scanWindowHeight) / 2 - 30,
+      (screenHeight - scanWindowHeight) / 2 - 40,
       scanWindowWidth,
       scanWindowHeight,
     );
@@ -474,10 +676,9 @@ class _ScanScreenState extends State<ScanScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        error.errorCode ==
-                                MobileScannerErrorCode.controllerUninitialized
-                            ? 'The scanner controller is initializing...'
-                            : 'Please verify camera permissions in settings.',
+                        error.errorCode == MobileScannerErrorCode.controllerUninitialized
+                            ? 'Scanner controller is initializing...'
+                            : 'Camera permissions are required to scan QR codes.',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white60,
@@ -526,7 +727,7 @@ class _ScanScreenState extends State<ScanScreen> {
                         onPressed: () => Navigator.pop(context),
                       ),
                       const Text(
-                        'Scanner',
+                        'Smart Scanner',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -534,8 +735,19 @@ class _ScanScreenState extends State<ScanScreen> {
                           letterSpacing: -0.5,
                         ),
                       ),
-                      // Place holder to balance title alignment
-                      const SizedBox(width: 48),
+                      // Photo library gallery button
+                      IconButton(
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.black.withValues(alpha: 0.5),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.all(12),
+                        ),
+                        icon: const Icon(
+                          Icons.photo_library_rounded,
+                          size: 20,
+                        ),
+                        onPressed: _scanFromGallery,
+                      ),
                     ],
                   ),
                   const Spacer(),
@@ -614,6 +826,25 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 }
 
+// Custom parser class for QR contents
+class _ParsedContent {
+  final String type;
+  final String title;
+  final IconData icon;
+  final Map<String, String> details;
+  final String primaryActionLabel;
+  final VoidCallback? primaryAction;
+
+  _ParsedContent({
+    required this.type,
+    required this.title,
+    required this.icon,
+    required this.details,
+    required this.primaryActionLabel,
+    this.primaryAction,
+  });
+}
+
 // Custom Painter for scanner cutout
 class ScannerOverlay extends CustomPainter {
   const ScannerOverlay({required this.scanWindow, this.borderRadius = 24.0});
@@ -623,8 +854,7 @@ class ScannerOverlay extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final backgroundPath = Path()
-      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final backgroundPath = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     final cutoutPath = Path()
       ..addRRect(
         RRect.fromRectAndRadius(scanWindow, Radius.circular(borderRadius)),
@@ -642,10 +872,9 @@ class ScannerOverlay extends CustomPainter {
 
     canvas.drawPath(backgroundPathWithCutout, backgroundPaint);
 
-    // Draw active-looking border corners
+    // Draw active glowing neon border corners
     final borderPaint = Paint()
-      ..color =
-          const Color(0xFF2563EB) // Cobalt Blue
+      ..color = const Color(0xFF2563EB) // Cobalt Blue
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4.0;
 
@@ -677,8 +906,7 @@ class ScannerOverlay extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant ScannerOverlay oldDelegate) {
-    return oldDelegate.scanWindow != scanWindow ||
-        oldDelegate.borderRadius != borderRadius;
+    return oldDelegate.scanWindow != scanWindow || oldDelegate.borderRadius != borderRadius;
   }
 }
 
@@ -691,8 +919,7 @@ class ScanningLine extends StatefulWidget {
   State<ScanningLine> createState() => _ScanningLineState();
 }
 
-class _ScanningLineState extends State<ScanningLine>
-    with SingleTickerProviderStateMixin {
+class _ScanningLineState extends State<ScanningLine> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -715,9 +942,7 @@ class _ScanningLineState extends State<ScanningLine>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        final position =
-            widget.scanWindow.top +
-            (widget.scanWindow.height * _controller.value);
+        final position = widget.scanWindow.top + (widget.scanWindow.height * _controller.value);
         return Positioned(
           left: widget.scanWindow.left + 8,
           top: position,
